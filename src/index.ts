@@ -3,6 +3,18 @@ import { do_listing_v2 } from './listings';
 import { fetch_file } from './files';
 import { renderSnapshotsHomePage } from './templates';
 
+function handleListingWithPagination(env: Env, bucket: R2Bucket, prefix: string, title: string, url: URL) {
+	const limit = parseInt(url.searchParams.get('limit') || '20');
+	const offset = parseInt(url.searchParams.get('offset') || '0');
+	const searchQuery = url.searchParams.get('search') || undefined;
+
+	// Validate parameters
+	const validLimit = Math.min(Math.max(limit, 1), 100); // Between 1 and 100
+	const validOffset = Math.max(offset, 0); // Non-negative
+
+	return do_listing_v2(env, bucket, prefix, title, validLimit, validOffset, searchQuery);
+}
+
 // noinspection JSUnusedGlobalSymbols
 export default {
 	async fetch(request: Request, env: Env) {
@@ -11,6 +23,7 @@ export default {
 			case 'GET': {
 				const url = new URL(request.url);
 				const { pathname } = url;
+
 				if (pathname.startsWith('/archive/')) {
 					const [, , bucketType, ...filePathParts] = pathname.split('/');
 					const filePath = filePathParts.join('/');
@@ -21,40 +34,89 @@ export default {
 				if (pathname.startsWith('/latest/')) {
 					const [, chain] = pathname.split('/');
 					const bucket = env.SNAPSHOT_ARCHIVE;
-					const objects = await getBucketObjects(bucket, `${chain}/latest/`, true);
+					const result = await getBucketObjects(bucket, `${chain}/latest/`, true);
 
-					return fetch_file(bucket, objects[0].key, request);
+					return fetch_file(bucket, result.objects[0].key, request);
+				}
+
+				if (pathname.startsWith('/latest-v1/')) {
+					const [, chain] = pathname.split('/');
+					const bucket = env.SNAPSHOT_ARCHIVE_V2;
+					const result = await getBucketObjects(bucket, `${chain}/latest-v1/`, true);
+
+					return fetch_file(bucket, result.objects[0].key, request);
 				}
 
 				if (pathname.startsWith('/latest-v2/')) {
 					const [, chain] = pathname.split('/');
 					const bucket = env.SNAPSHOT_ARCHIVE_V2;
-					const objects = await getBucketObjects(bucket, `${chain}/latest-v2/`, true);
+					const result = await getBucketObjects(bucket, `${chain}/latest-v2/`, true);
 
-					return fetch_file(bucket, objects[0].key, request);
+					return fetch_file(bucket, result.objects[0].key, request);
 				}
 
 				switch (pathname) {
+					case '/': {
+						return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
+					}
 					case '/list':
 					case '/list/': {
 						return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
 					}
-					case '/list/favicon.ico':
-						return env.ASSETS.fetch(request);
+
 					case '/list/calibnet/latest-v2':
-						return do_listing_v2(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Snapshots v2 (last 14 days)');
+						return handleListingWithPagination(
+							env,
+							env.SNAPSHOT_ARCHIVE_V2,
+							'calibnet/latest-v2',
+							'Calibnet Latest Snapshots v2 (last 14 days)',
+							url,
+						);
+					case '/list/calibnet/latest-v1':
+						return handleListingWithPagination(
+							env,
+							env.SNAPSHOT_ARCHIVE_V2,
+							'calibnet/latest-v1',
+							'Calibnet Latest Snapshots v1 (last 14 days)',
+							url,
+						);
+
+					case '/list/mainnet/latest-v2':
+						return handleListingWithPagination(
+							env,
+							env.SNAPSHOT_ARCHIVE_V2,
+							'mainnet/latest-v2',
+							'Mainnet Latest Snapshots v2 (last 14 days)',
+							url,
+						);
+					case '/list/mainnet/latest-v1':
+						return handleListingWithPagination(
+							env,
+							env.SNAPSHOT_ARCHIVE_V2,
+							'mainnet/latest-v1',
+							'Mainnet Latest Snapshots v1 (last 14 days)',
+							url,
+						);
+
 					case '/list/mainnet/latest':
-						return do_listing_v2(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Latest Snapshots (last 14 days)');
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Latest Snapshots (last 14 days)', url);
 					case '/list/calibnet/latest':
-						return do_listing_v2(env, env.SNAPSHOT_ARCHIVE, 'calibnet/latest', 'Calibnet Latest Snapshots (last 14 days)');
+						return handleListingWithPagination(
+							env,
+							env.SNAPSHOT_ARCHIVE,
+							'calibnet/latest',
+							'Calibnet Latest Snapshots (last 14 days)',
+							url,
+						);
+
 					case '/list/mainnet/diff':
-						return do_listing_v2(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive');
+						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
 					case '/list/calibnet/diff':
-						return do_listing_v2(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive');
+						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
 					case '/list/mainnet/lite':
-						return do_listing_v2(env, env.FOREST_ARCHIVE, 'mainnet/lite', 'Mainnet Lite Snapshots Archive');
+						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/lite', 'Mainnet Lite Snapshots Archive', url);
 					case '/list/calibnet/lite':
-						return do_listing_v2(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive');
+						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 					default:
 						return env.ASSETS.fetch(request);
 				}

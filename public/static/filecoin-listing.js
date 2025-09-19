@@ -1,9 +1,35 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function filterSnapshots() {
-	const query = document.getElementById('searchBox').value.toLowerCase();
-	document.querySelectorAll('.snapshot-card').forEach((card) => {
-		card.style.display = card.dataset.key.toLowerCase().includes(query) ? 'flex' : 'none';
-	});
+function performSearch() {
+	const query = document.getElementById('searchBox').value;
+	const url = new URL(window.location);
+
+	if (query.trim()) {
+		url.searchParams.set('search', query);
+	} else {
+		url.searchParams.delete('search');
+	}
+
+	// Reset to first page when searching
+	url.searchParams.set('offset', '0');
+
+	window.location.href = url.toString();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function goToPage(offset) {
+	const url = new URL(window.location);
+	url.searchParams.set('offset', offset);
+	// Preserve search parameter
+	window.location.href = url.toString();
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function changeLimit(newLimit) {
+	const url = new URL(window.location);
+	url.searchParams.set('limit', newLimit);
+	url.searchParams.set('offset', '0'); // Reset to first page
+	// Preserve search parameter
+	window.location.href = url.toString();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

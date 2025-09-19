@@ -1,31 +1,63 @@
 <!--suppress HtmlUnknownTarget -->
-<div class="snapshot-card bg-gray-800 shadow-lg rounded-2xl p-6 flex flex-col transition hover:shadow-xl" data-key="{{key}}">
-  <h2 class="font-mono text-sm text-gray-200 truncate mb-3">
-    https://forest-archive.chainsafe.dev{{base}}
-  </h2>
-
-  <div class="flex justify-between text-xs text-gray-400 mb-4">
-    <span>{{fileSize}}</span>
-    <span>Uploaded: {{uploaded}}</span>
+<div class="snapshot-card group bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700/50 shadow-xl rounded-3xl p-6 flex flex-col transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/10 hover:-translate-y-1 hover:border-green-500/30" data-key="{{key}}">
+  <!-- Header -->
+  <div class="flex items-start justify-between mb-4">
+    <div class="flex-1 min-w-0">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        <span class="text-xs font-medium text-green-400 uppercase tracking-wider">Live Snapshot</span>
+      </div>
+      <h2 class="font-mono text-sm text-gray-200 truncate bg-gray-900/50 px-3 py-2 rounded-lg border border-gray-700/50">
+        https://forest-archive.chainsafe.dev{{base}}
+      </h2>
+    </div>
   </div>
 
-  <div class="mt-auto flex gap-3">
-    <a class="flex-1 text-center bg-primary text-gray-900 px-4 py-2 rounded-lg text-sm font-semibold hover:opacity-90 transition"
+  <!-- File Info -->
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-gray-900/50 rounded-xl p-3 border border-gray-700/50">
+      <div class="text-xs text-gray-400 mb-1">File Size</div>
+      <div class="text-sm font-semibold text-white">{{fileSize}}</div>
+    </div>
+    <div class="bg-gray-900/50 rounded-xl p-3 border border-gray-700/50">
+      <div class="text-xs text-gray-400 mb-1">Uploaded</div>
+      <div class="text-sm font-semibold text-white">{{uploaded}}</div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="mt-auto space-y-3">
+    <a class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-2 group-hover:shadow-lg group-hover:shadow-green-500/25"
        href="{{base}}">
-      Download
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      Download Snapshot
     </a>
-    <button class="text-sm border border-gray-600 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-700 transition"
-            data-sha256-url="{{base}}.sha256sum"
-    onclick="revealSha(this)">
-    SHA256
-    </button>
-    <button class="text-sm border border-gray-600 px-4 py-2 rounded-lg text-gray-200 hover:bg-gray-700 transition"
-    data-meta-url="{{base}}.metadata.json"
-    onclick="revealMeta(this)">
-    Meta
-    </button>
+
+    <div class="flex gap-2">
+      <button class="flex-1 bg-gray-800/50 border border-gray-600/50 px-4 py-2 rounded-xl text-sm font-medium text-gray-300 hover:bg-gray-700/50 hover:border-gray-500/50 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+              data-sha256-url="{{base}}.sha256sum"
+              onclick="revealSha(this)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        SHA256
+      </button>
+      <button class="flex-1 bg-gray-800/50 border border-gray-600/50 px-4 py-2 rounded-xl text-sm font-medium text-gray-300 hover:bg-gray-700/50 hover:border-gray-500/50 hover:text-white transition-all duration-300 flex items-center justify-center gap-2"
+              data-meta-url="{{base}}.metadata.json"
+              onclick="revealMeta(this)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        </svg>
+        Metadata
+      </button>
+    </div>
   </div>
 
-  <pre class="sha256-content hidden mt-3 bg-gray-900 border border-gray-700 p-3 rounded text-xs text-green-400 overflow-x-auto"></pre>
-  <pre class="meta-content hidden mt-3 bg-gray-900 border border-gray-700 p-3 rounded text-xs text-blue-400 overflow-x-auto"></pre>
+  <!-- Expandable Content -->
+  <div class="mt-4 space-y-3">
+    <pre class="sha256-content hidden bg-gray-900/80 border border-gray-700/50 p-4 rounded-xl text-xs text-green-400 overflow-x-auto font-mono"></pre>
+    <pre class="meta-content hidden bg-gray-900/80 border border-gray-700/50 p-4 rounded-xl text-xs text-blue-400 overflow-x-auto font-mono"></pre>
+  </div>
 </div>

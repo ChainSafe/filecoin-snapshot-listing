@@ -3,9 +3,10 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"deploy": "wrangler deploy",
-		"dev": "wrangler dev --remote",
-		"start": "wrangler dev --remote",
+		"deploy": "wrangler deploy --env production",
+		"deploy:preview": "wrangler deploy --env preview",
+		"dev": "wrangler dev --remote --env preview",
+		"preview": "wrangler dev --remote --env preview",
 		"build:css": "npx @tailwindcss/cli -i src/input.css -o public/static/style.css",
 		"cf-typegen": "wrangler types",
 		"js-fmt": "prettier --write src/*.ts",

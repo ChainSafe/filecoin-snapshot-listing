@@ -1,0 +1,33 @@
+<div class="mt-12 bg-gray-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700/50">
+	<div class="flex flex-col lg:flex-row justify-between items-center gap-6">
+		<!-- Results Info -->
+		<div class="text-center lg:text-left">
+			<div class="text-sm text-gray-400 mb-1">Results</div>
+			<div class="text-lg font-semibold text-white">
+				{{startItem}}-{{endItem}} of {{totalCount}} snapshots
+			</div>
+			{{searchInfo}}
+		</div>
+
+		<!-- Controls -->
+		<div class="flex flex-col sm:flex-row items-center gap-4">
+			<!-- Items per page -->
+			<div class="flex items-center gap-3">
+				<label class="text-sm text-gray-400">Show:</label>
+				<select onchange="changeLimit(this.value)" class="px-4 py-2 bg-gray-800/50 border border-gray-600/50 text-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:border-green-400/50 transition-all duration-300">
+					<option value="10" {{limit10Selected}}>10 per page</option>
+					<option value="20" {{limit20Selected}}>20 per page</option>
+					<option value="50" {{limit50Selected}}>50 per page</option>
+					<option value="100" {{limit100Selected}}>100 per page</option>
+				</select>
+			</div>
+
+			<!-- Pagination -->
+			<div class="flex items-center gap-2">
+				{{previousButton}}
+				{{pageNumbers}}
+				{{nextButton}}
+			</div>
+		</div>
+	</div>
+</div>
