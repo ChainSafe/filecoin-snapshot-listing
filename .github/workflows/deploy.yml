@@ -2,6 +2,10 @@ name: Deploy CF filecoin-snapshot-listing
 on:
   pull_request:
   push:
+    branches:
+      - main
+    tags:
+      - v*
 
 jobs:
   check-and-deploy:
@@ -32,9 +36,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           command: deploy --env preview
       - name: Deploy Production
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' )
+        if: startsWith(github.ref, 'refs/tags/')
         uses: cloudflare/wrangler-action@v3
         with:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy --env preview
+          command: deploy --env production
