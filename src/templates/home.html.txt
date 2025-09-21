@@ -75,6 +75,26 @@
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="/list/mainnet/latest-v2"
+                   class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-xl">🆕</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest V2 (F3)</h3>
+                    </div>
+                    <p class="text-sm text-gray-400">Newest F3 snapshots</p>
+                </a>
+                <a href="/list/mainnet/latest-v1"
+                   class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">
+                            <span class="text-xl">1️⃣</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest V1</h3>
+                    </div>
+                    <p class="text-sm text-gray-400">Legacy snapshots</p>
+                </a>
                 <a href="/list/mainnet/latest"
                    class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-green-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/10 hover:-translate-y-1">
                     <div class="flex items-center gap-3 mb-3">
@@ -141,7 +161,7 @@
                         </div>
                         <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest V1</h3>
                     </div>
-                    <p class="text-sm text-gray-400">Legacy F1 snapshots</p>
+                    <p class="text-sm text-gray-400">Legacy snapshots</p>
                 </a>
                 <a href="/list/calibnet/latest"
                    class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">

@@ -66,7 +66,7 @@ async function revealMeta(button) {
 		try {
 			const resp = await fetch(button.dataset.metaUrl);
 			const json = await resp.json();
-			pre.textContent = resp.ok ? JSON.stringify(json, null, 2) : errMessage;
+			pre.textContent = resp.ok ? JSON.stringify(json['Snapshot'], null, 2) : errMessage;
 		} catch {
 			pre.textContent = errMessage;
 		}

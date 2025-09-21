@@ -24,8 +24,6 @@ bucket_name = "forest-snapshots-v2"
 # Preview environment
 [env.preview]
 name = "filecoin-snapshot-listing-preview"
-compatibility_date = "2023-09-13"
-logpush = true
 
 # R2 buckets for preview environment
 [[env.preview.r2_buckets]]
@@ -52,8 +50,6 @@ zone_name = "chainsafe.dev"
 
 # Preview environment will use the default worker.dev subdomain
 # No custom routes needed for preview
-
-# R2 buckets are now environment-specific (see above)
 
 # Observability / logs
 [observability.logs]

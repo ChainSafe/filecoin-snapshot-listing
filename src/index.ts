@@ -81,6 +81,15 @@ export default {
 							url,
 						);
 
+					case '/list/calibnet/latest':
+						return handleListingWithPagination(
+							env,
+							env.SNAPSHOT_ARCHIVE,
+							'calibnet/latest',
+							'Calibnet Latest Snapshots (last 14 days)',
+							url,
+						);
+
 					case '/list/mainnet/latest-v2':
 						return handleListingWithPagination(
 							env,
@@ -100,15 +109,6 @@ export default {
 
 					case '/list/mainnet/latest':
 						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Latest Snapshots (last 14 days)', url);
-					case '/list/calibnet/latest':
-						return handleListingWithPagination(
-							env,
-							env.SNAPSHOT_ARCHIVE,
-							'calibnet/latest',
-							'Calibnet Latest Snapshots (last 14 days)',
-							url,
-						);
-
 					case '/list/mainnet/diff':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
 					case '/list/calibnet/diff':
