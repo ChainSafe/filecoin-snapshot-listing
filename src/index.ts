@@ -69,7 +69,7 @@ export default {
 							env,
 							env.SNAPSHOT_ARCHIVE_V2,
 							'calibnet/latest-v2',
-							'Calibnet Latest Snapshots v2 (last 14 days)',
+							'Calibnet Latest Snapshots (F3) (last 14 days)',
 							url,
 						);
 					case '/list/calibnet/latest-v1':
@@ -77,25 +77,20 @@ export default {
 							env,
 							env.SNAPSHOT_ARCHIVE_V2,
 							'calibnet/latest-v1',
-							'Calibnet Latest Snapshots v1 (last 14 days)',
+							'Calibnet Legacy Snapshots (last 14 days)',
 							url,
 						);
-
-					case '/list/calibnet/latest':
-						return handleListingWithPagination(
-							env,
-							env.SNAPSHOT_ARCHIVE,
-							'calibnet/latest',
-							'Calibnet Latest Snapshots (last 14 days)',
-							url,
-						);
+					case '/list/calibnet/diff':
+						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
+					case '/list/calibnet/lite':
+						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 
 					case '/list/mainnet/latest-v2':
 						return handleListingWithPagination(
 							env,
 							env.SNAPSHOT_ARCHIVE_V2,
 							'mainnet/latest-v2',
-							'Mainnet Latest Snapshots v2 (last 14 days)',
+							'Mainnet Latest Snapshots (F3) (last 14 days)',
 							url,
 						);
 					case '/list/mainnet/latest-v1':
@@ -103,20 +98,13 @@ export default {
 							env,
 							env.SNAPSHOT_ARCHIVE_V2,
 							'mainnet/latest-v1',
-							'Mainnet Latest Snapshots v1 (last 14 days)',
+							'Mainnet Legacy Snapshots (last 14 days)',
 							url,
 						);
-
-					case '/list/mainnet/latest':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Latest Snapshots (last 14 days)', url);
 					case '/list/mainnet/diff':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
-					case '/list/calibnet/diff':
-						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
 					case '/list/mainnet/lite':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/lite', 'Mainnet Lite Snapshots Archive', url);
-					case '/list/calibnet/lite':
-						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 					default:
 						return env.ASSETS.fetch(request);
 				}
