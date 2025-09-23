@@ -172,6 +172,7 @@ dist
 
 # IDEA
 *.iml
+.idea/
 
 # eslint
 .pnp.cjs

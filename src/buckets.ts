@@ -56,6 +56,7 @@ export async function getBucketObjects(
 	let truncated = true;
 
 	// First, collect ALL objects that match the search criteria
+	console.log('Fetching objects from bucket:', bucket, 'with prefix:', prefix);
 	while (truncated) {
 		const result = await bucket.list({ limit: 500, prefix: prefix, cursor });
 
@@ -92,7 +93,10 @@ export async function getBucketObjects(
 
 	if (latest) {
 		const filteredObjects = sortedObjects.filter(
-			(obj) => obj.key.endsWith('.car.zst') && allObjects.some((o) => o.key === `${obj.key}.sha256sum`),
+			(obj) => obj.key.endsWith('.car.zst'),
+			// && allObjects.some(
+			//     (o) => o.key === `${obj.key}.sha256sum`
+			// )
 		);
 
 		return {

@@ -32,26 +32,35 @@ export default {
 				}
 
 				if (pathname.startsWith('/latest/')) {
-					const [, chain] = pathname.split('/');
-					const bucket = env.SNAPSHOT_ARCHIVE;
-					const result = await getBucketObjects(bucket, `${chain}/latest/`, true);
+					const [, , chain] = pathname.split('/');
 
+					const bucket_path = chain === 'mainnet' ? 'mainnet/latest/' : 'calibnet/latest-v2/';
+					const bucket = chain === 'mainnet' ? env.SNAPSHOT_ARCHIVE : env.SNAPSHOT_ARCHIVE_V2;
+
+					const result = await getBucketObjects(bucket, bucket_path, true);
+					if (result.objects.length === 0) {
+						return new Response('No snapshots found', { status: 404 });
+					}
 					return fetch_file(bucket, result.objects[0].key, request);
 				}
 
 				if (pathname.startsWith('/latest-v1/')) {
-					const [, chain] = pathname.split('/');
-					const bucket = env.SNAPSHOT_ARCHIVE_V2;
-					const result = await getBucketObjects(bucket, `${chain}/latest-v1/`, true);
-
+					const [, , chain] = pathname.split('/');
+					const bucket = env.SNAPSHOT_ARCHIVE;
+					const result = await getBucketObjects(bucket, `${chain}/latest/`, true);
+					if (result.objects.length === 0) {
+						return new Response('No snapshots found', { status: 404 });
+					}
 					return fetch_file(bucket, result.objects[0].key, request);
 				}
 
 				if (pathname.startsWith('/latest-v2/')) {
-					const [, chain] = pathname.split('/');
+					const [, , chain] = pathname.split('/');
 					const bucket = env.SNAPSHOT_ARCHIVE_V2;
 					const result = await getBucketObjects(bucket, `${chain}/latest-v2/`, true);
-
+					if (result.objects.length === 0) {
+						return new Response('No snapshots found', { status: 404 });
+					}
 					return fetch_file(bucket, result.objects[0].key, request);
 				}
 
@@ -65,46 +74,23 @@ export default {
 					}
 
 					case '/list/calibnet/latest-v2':
-						return handleListingWithPagination(
-							env,
-							env.SNAPSHOT_ARCHIVE_V2,
-							'calibnet/latest-v2',
-							'Calibnet Latest Snapshots (F3) (last 14 days)',
-							url,
-						);
-					case '/list/calibnet/latest-v1':
-						return handleListingWithPagination(
-							env,
-							env.SNAPSHOT_ARCHIVE_V2,
-							'calibnet/latest-v1',
-							'Calibnet Legacy Snapshots (last 14 days)',
-							url,
-						);
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
+					case '/list/calibnet/latest':
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'calibnet/latest', 'Calibnet Legacy Snapshots', url);
 					case '/list/calibnet/diff':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
 					case '/list/calibnet/lite':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 
 					case '/list/mainnet/latest-v2':
-						return handleListingWithPagination(
-							env,
-							env.SNAPSHOT_ARCHIVE_V2,
-							'mainnet/latest-v2',
-							'Mainnet Latest Snapshots (F3) (last 14 days)',
-							url,
-						);
-					case '/list/mainnet/latest-v1':
-						return handleListingWithPagination(
-							env,
-							env.SNAPSHOT_ARCHIVE_V2,
-							'mainnet/latest-v1',
-							'Mainnet Legacy Snapshots (last 14 days)',
-							url,
-						);
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
+					case '/list/mainnet/latest':
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Legacy Snapshots', url);
 					case '/list/mainnet/diff':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
 					case '/list/mainnet/lite':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/lite', 'Mainnet Lite Snapshots Archive', url);
+
 					default:
 						return env.ASSETS.fetch(request);
 				}
