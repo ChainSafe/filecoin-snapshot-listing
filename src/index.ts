@@ -73,18 +73,22 @@ export default {
 						return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
 					}
 
+					case '/list/calibnet/latest':
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
 					case '/list/calibnet/latest-v2':
 						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
-					case '/list/calibnet/latest':
+					case '/list/calibnet/latest-v1':
 						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'calibnet/latest', 'Calibnet Legacy Snapshots', url);
 					case '/list/calibnet/diff':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
 					case '/list/calibnet/lite':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 
+					case '/list/mainnet/latest':
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Legacy Snapshots', url);
 					case '/list/mainnet/latest-v2':
 						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
-					case '/list/mainnet/latest':
+					case '/list/mainnet/latest-v1':
 						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Legacy Snapshots', url);
 					case '/list/mainnet/diff':
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
