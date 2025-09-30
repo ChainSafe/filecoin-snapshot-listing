@@ -41,7 +41,19 @@ export default {
 					if (result.objects.length === 0) {
 						return new Response('No snapshots found', { status: 404 });
 					}
-					return fetch_file(bucket, result.objects[0].key, request);
+					const snapshot = result.objects[0];
+					if (request.method === 'HEAD') {
+						return new Response(null, {
+							status: 200,
+							headers: {
+								'Content-Length': snapshot.size.toString(),
+								'Content-Type': 'application/octet-stream',
+								'Last-Modified': snapshot.uploaded.toUTCString(),
+								Url: `/archive/${snapshot.key}`,
+							},
+						});
+					}
+					return fetch_file(bucket, snapshot.key, request);
 				}
 
 				if (pathname.startsWith('/latest-v1/')) {
