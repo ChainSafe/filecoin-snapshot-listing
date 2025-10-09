@@ -34,8 +34,8 @@ export default {
 				if (pathname.startsWith('/latest/')) {
 					const [, , chain] = pathname.split('/');
 
-					const bucket_path = chain === 'mainnet' ? 'mainnet/latest/' : 'calibnet/latest-v2/';
-					const bucket = chain === 'mainnet' ? env.SNAPSHOT_ARCHIVE : env.SNAPSHOT_ARCHIVE_V2;
+					const bucket_path = `${chain}/latest-v2/`;
+					const bucket = env.SNAPSHOT_ARCHIVE_V2;
 
 					const result = await getBucketObjects(bucket, bucket_path, true);
 					if (result.objects.length === 0) {
@@ -97,7 +97,7 @@ export default {
 						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 
 					case '/list/mainnet/latest':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Legacy Snapshots', url);
+						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
 					case '/list/mainnet/latest-v2':
 						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
 					case '/list/mainnet/latest-v1':
