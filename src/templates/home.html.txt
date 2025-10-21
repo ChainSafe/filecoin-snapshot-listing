@@ -18,6 +18,14 @@
             <span class="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent">Filecoin Snapshots</span>
         </a>
         <div class="flex gap-8">
+            <a href="https://forest-archive.chainsafe.dev/latest/mainnet"
+               class="text-gray-300 hover:text-green-400 transition-all duration-300 font-medium hover:scale-105">
+                Latest Mainnet
+            </a>
+            <a href="https://forest-archive.chainsafe.dev/latest/calibnet"
+               class="text-gray-300 hover:text-green-400 transition-all duration-300 font-medium hover:scale-105">
+                Latest Calibnet
+            </a>
             <a href="https://forest.chainsafe.io/" target="_blank"
                class="text-gray-300 hover:text-green-400 transition-all duration-300 font-medium hover:scale-105">
                 Explore Forest
@@ -105,16 +113,16 @@
                     </div>
                     <p class="text-sm text-gray-400">Lightweight snapshots</p>
                 </a>
-                <a href="/list/mainnet/latest-v1"
-                   class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">
-                            <span class="text-xl">1️⃣</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Legacy</h3>
-                    </div>
-                    <p class="text-sm text-gray-400">Legacy snapshots without F3</p>
-                </a>
+<!--                <a href="/list/mainnet/latest-v1"-->
+<!--                   class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">-->
+<!--                    <div class="flex items-center gap-3 mb-3">-->
+<!--                        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">-->
+<!--                            <span class="text-xl">1️⃣</span>-->
+<!--                        </div>-->
+<!--                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Legacy</h3>-->
+<!--                    </div>-->
+<!--                    <p class="text-sm text-gray-400">Legacy snapshots without F3</p>-->
+<!--                </a>-->
             </div>
         </div>
     </section>
@@ -163,16 +171,16 @@
                     </div>
                     <p class="text-sm text-gray-400">Lightweight snapshots</p>
                 </a>
-                <a href="/list/calibnet/latest-v1"
-                   class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">
-                            <span class="text-xl">1️⃣</span>
-                        </div>
-                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Legacy</h3>
-                    </div>
-                    <p class="text-sm text-gray-400">Legacy snapshots without F3</p>
-                </a>
+<!--                <a href="/list/calibnet/latest-v1"-->
+<!--                   class="group block p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 rounded-2xl border border-gray-700/50 hover:border-blue-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1">-->
+<!--                    <div class="flex items-center gap-3 mb-3">-->
+<!--                        <div class="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">-->
+<!--                            <span class="text-xl">1️⃣</span>-->
+<!--                        </div>-->
+<!--                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Legacy</h3>-->
+<!--                    </div>-->
+<!--                    <p class="text-sm text-gray-400">Legacy snapshots without F3</p>-->
+<!--                </a>-->
             </div>
         </div>
     </section>

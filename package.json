@@ -5,7 +5,7 @@
 	"scripts": {
 		"deploy": "wrangler deploy --env production",
 		"deploy:preview": "wrangler deploy --env preview",
-		"dev": "wrangler dev --remote --env preview",
+		"dev": "wrangler dev --remote",
 		"preview": "wrangler dev --remote --env preview",
 		"build:css": "npx @tailwindcss/cli -i src/input.css -o public/static/style.css",
 		"cf-typegen": "wrangler types",
