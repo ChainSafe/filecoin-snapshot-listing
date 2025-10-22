@@ -81,7 +81,7 @@
                         <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">
                             <span class="text-xl">🆕</span>
                         </div>
-                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest archive</h3>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest</h3>
                     </div>
                     <p class="text-sm text-gray-400">Latest lightweight snapshot. Use it to bootstrap your node.</p>
                 </a>
@@ -91,7 +91,7 @@
                         <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
                             <span class="text-xl">📄</span>
                         </div>
-                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest</h3>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">Latest archive</h3>
                     </div>
                     <p class="text-sm text-gray-400">Recent lightweight snapshots list.</p>
                 </a>
