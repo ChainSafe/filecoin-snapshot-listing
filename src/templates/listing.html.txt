@@ -22,7 +22,7 @@
       <a href="https://forest.chainsafe.io/" target="_blank" class="text-gray-300 hover:text-green-400 transition-all duration-300 font-medium hover:scale-105">
         Explore Forest
       </a>
-      <a href="https://docs.forest.chainsafe.io/filecoin_services/" target="_blank" class="text-gray-300 hover:text-green-400 transition-all duration-300 font-medium hover:scale-105">
+      <a href="https://docs.forest.chainsafe.io/knowledge_base/snapshot_service" target="_blank" class="text-gray-300 hover:text-green-400 transition-all duration-300 font-medium hover:scale-105">
         Documentation
       </a>
     </div>
@@ -74,7 +74,7 @@
         <a href="https://forest.chainsafe.io/" target="_blank" class="text-gray-400 hover:text-green-400 transition-colors">
           Forest Explorer
         </a>
-        <a href="https://docs.forest.chainsafe.io/filecoin_services/" target="_blank" class="text-gray-400 hover:text-green-400 transition-colors">
+        <a href="https://docs.forest.chainsafe.io/knowledge_base/snapshot_service" target="_blank" class="text-gray-400 hover:text-green-400 transition-colors">
           Documentation
         </a>
         <a href="https://github.com/ChainSafe/forest" target="_blank" class="text-gray-400 hover:text-green-400 transition-colors">
