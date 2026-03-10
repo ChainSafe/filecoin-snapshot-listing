@@ -13,7 +13,8 @@ function handleListingWithPagination(env: Env, bucket: R2Bucket, prefix: string,
 	const validLimit = Math.min(Math.max(limit, 1), 100); // Between 1 and 100
 	const validOffset = Math.max(offset, 0); // Non-negative
 
-	return do_listing_v2(env, bucket, prefix, title, validLimit, validOffset, searchQuery, format);
+	const baseUrl = url.origin;
+	return do_listing_v2(env, bucket, prefix, title, validLimit, validOffset, searchQuery, format, baseUrl);
 }
 
 // noinspection JSUnusedGlobalSymbols
