@@ -1,6 +1,5 @@
 import type { Env } from './buckets';
 import { getBucketListingName, getBucketObjects } from './buckets';
-import { arrayBufferToHex } from './utils';
 import { renderListingPageTemplate, renderSnapshotCardTemplate, renderPaginationTemplate } from './templates';
 import { formatFileSize } from './utils';
 
@@ -21,18 +20,12 @@ export async function do_listing_v2(
 		const allCarFiles = allResult.objects.filter((obj) => obj.key.endsWith('.car.zst'));
 		const page = allCarFiles.slice(offset, offset + limit);
 
-		const headObjects = await Promise.all(page.map((obj) => bucket.head(obj.key)));
-
-		const items = page.map((obj, i) => {
-			const head = headObjects[i];
-			const sha256 = head?.checksums?.sha256 ? arrayBufferToHex(head.checksums.sha256) : '';
-			return {
-				url: `${baseUrl ?? ''}/archive/${bucketName}/${obj.key}`,
-				size: obj.size,
-				sha256,
-				uploaded: obj.uploaded.toISOString(),
-			};
-		});
+		const items = page.map((obj) => ({
+			url: `${baseUrl ?? ''}/archive/${bucketName}/${obj.key}`,
+			sha256url: `${baseUrl ?? ''}/archive/${bucketName}/${obj.key}.sha256sum`,
+			size: obj.size,
+			uploaded: obj.uploaded.toISOString(),
+		}));
 
 		return new Response(JSON.stringify({ total: allCarFiles.length, offset, limit, items }, null, 2), {
 			headers: { 'content-type': 'application/json' },
