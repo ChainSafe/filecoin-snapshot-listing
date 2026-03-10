@@ -11,9 +11,26 @@ export async function do_listing_v2(
 	limit: number = 20,
 	offset: number = 0,
 	searchQuery?: string,
+	format?: string,
 ) {
 	const result = await getBucketObjects(bucket, prefix, false, limit, offset, searchQuery);
 	const { objects: listedObjects, totalCount, hasMore } = result;
+
+	if (format === 'json') {
+		const bucketName = getBucketListingName(bucket, env);
+		const items = listedObjects
+			.filter((obj) => obj.key.endsWith('.car.zst'))
+			.map((obj) => ({
+				key: obj.key,
+				url: `/archive/${bucketName}/${obj.key}`,
+				size: obj.size,
+				sha256: obj.sha256sum,
+				uploaded: obj.uploaded.toISOString(),
+			}));
+		return new Response(JSON.stringify({ total: totalCount, offset, limit, items }, null, 2), {
+			headers: { 'content-type': 'application/json' },
+		});
+	}
 
 	// build HTML with Tailwind
 	let bodyContent = `
