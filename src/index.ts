@@ -10,7 +10,7 @@ function handleListingWithPagination(env: Env, bucket: R2Bucket, prefix: string,
 	const format = url.searchParams.get('format') || undefined;
 
 	// Validate parameters
-	const validLimit = Math.min(Math.max(limit, 1), 100); // Between 1 and 100
+	const validLimit = limit === 0 ? 0 : Math.min(Math.max(limit, 1), 100); // 0 = all, otherwise between 1 and 100
 	const validOffset = Math.max(offset, 0); // Non-negative
 
 	const baseUrl = url.origin;
