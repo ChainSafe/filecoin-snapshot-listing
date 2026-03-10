@@ -18,7 +18,7 @@ export async function do_listing_v2(
 		const bucketName = getBucketListingName(bucket, env);
 		const allResult = await getBucketObjects(bucket, prefix, false, undefined, 0, searchQuery);
 		const allCarFiles = allResult.objects.filter((obj) => obj.key.endsWith('.car.zst'));
-		const page = allCarFiles.slice(offset, offset + limit);
+		const page = limit === 0 ? allCarFiles.slice(offset) : allCarFiles.slice(offset, offset + limit);
 
 		const items = page.map((obj) => ({
 			url: `${baseUrl ?? ''}/archive/${bucketName}/${obj.key}`,

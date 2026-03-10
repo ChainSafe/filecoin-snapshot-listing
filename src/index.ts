@@ -4,13 +4,13 @@ import { fetch_file } from './files';
 import { renderSnapshotsHomePage } from './templates';
 
 function handleListingWithPagination(env: Env, bucket: R2Bucket, prefix: string, title: string, url: URL) {
-	const limit = parseInt(url.searchParams.get('limit') || '20');
+	const format = url.searchParams.get('format') || undefined;
+	const limit = parseInt(url.searchParams.get('limit') || (format === 'json' ? '0' : '20'));
 	const offset = parseInt(url.searchParams.get('offset') || '0');
 	const searchQuery = url.searchParams.get('search') || undefined;
-	const format = url.searchParams.get('format') || undefined;
 
 	// Validate parameters
-	const validLimit = Math.min(Math.max(limit, 1), 100); // Between 1 and 100
+	const validLimit = limit === 0 ? 0 : Math.min(Math.max(limit, 1), 100); // 0 = all, otherwise between 1 and 100
 	const validOffset = Math.max(offset, 0); // Non-negative
 
 	const baseUrl = url.origin;
