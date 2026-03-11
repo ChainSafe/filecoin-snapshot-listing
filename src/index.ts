@@ -17,110 +17,136 @@ function handleListingWithPagination(env: Env, bucket: R2Bucket, prefix: string,
 	return do_listing_v2(env, bucket, prefix, title, validLimit, validOffset, searchQuery, format, baseUrl);
 }
 
+function withCors(response: Response): Response {
+	const newHeaders = new Headers(response.headers);
+	newHeaders.set('Access-Control-Allow-Origin', '*');
+	return new Response(response.body, {
+		status: response.status,
+		statusText: response.statusText,
+		headers: newHeaders,
+	});
+}
+
+async function handleRequest(request: Request, env: Env): Promise<Response> {
+	switch (request.method) {
+		case 'HEAD':
+		case 'GET': {
+			const url = new URL(request.url);
+			const { pathname } = url;
+
+			if (pathname.startsWith('/archive/')) {
+				const [, , bucketType, ...filePathParts] = pathname.split('/');
+				const filePath = filePathParts.join('/');
+				const bucket = getBucketListingObj(bucketType, env);
+				return fetch_file(bucket, filePath, request); // Pass the request object here
+			}
+
+			if (pathname.startsWith('/latest/')) {
+				const [, , chain] = pathname.split('/');
+
+				const bucket_path = `${chain}/latest-v2/`;
+				const bucket = env.SNAPSHOT_ARCHIVE_V2;
+
+				const result = await getBucketObjects(bucket, bucket_path, true);
+				if (result.objects.length === 0) {
+					return new Response('No snapshots found', { status: 404 });
+				}
+				const snapshot = result.objects[0];
+				if (request.method === 'HEAD') {
+					return new Response(null, {
+						status: 200,
+						headers: {
+							'Content-Length': snapshot.size.toString(),
+							'Content-Type': 'application/octet-stream',
+							'Last-Modified': snapshot.uploaded.toUTCString(),
+							Url: `/archive/${snapshot.key}`,
+						},
+					});
+				}
+				return fetch_file(bucket, snapshot.key, request);
+			}
+
+			if (pathname.startsWith('/latest-v1/')) {
+				const [, , chain] = pathname.split('/');
+				const bucket = env.SNAPSHOT_ARCHIVE;
+				const result = await getBucketObjects(bucket, `${chain}/latest/`, true);
+				if (result.objects.length === 0) {
+					return new Response('No snapshots found', { status: 404 });
+				}
+				return fetch_file(bucket, result.objects[0].key, request);
+			}
+
+			if (pathname.startsWith('/latest-v2/')) {
+				const [, , chain] = pathname.split('/');
+				const bucket = env.SNAPSHOT_ARCHIVE_V2;
+				const result = await getBucketObjects(bucket, `${chain}/latest-v2/`, true);
+				if (result.objects.length === 0) {
+					return new Response('No snapshots found', { status: 404 });
+				}
+				return fetch_file(bucket, result.objects[0].key, request);
+			}
+
+			switch (pathname) {
+				case '/': {
+					return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
+				}
+				case '/list':
+				case '/list/': {
+					return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
+				}
+
+				case '/list/calibnet/latest':
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
+				case '/list/calibnet/latest-v2':
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
+				case '/list/calibnet/latest-v1':
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'calibnet/latest', 'Calibnet Legacy Snapshots', url);
+				case '/list/calibnet/diff':
+					return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
+				case '/list/calibnet/lite':
+					return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
+
+				case '/list/mainnet/latest':
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
+				case '/list/mainnet/latest-v2':
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
+				case '/list/mainnet/latest-v1':
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Legacy Snapshots', url);
+				case '/list/mainnet/diff':
+					return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
+				case '/list/mainnet/lite':
+					return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/lite', 'Mainnet Lite Snapshots Archive', url);
+
+				default:
+					return env.ASSETS.fetch(request);
+			}
+		}
+		default: {
+			return new Response('Method not allowed', {
+				status: 405,
+				headers: {
+					Allow: 'GET, HEAD',
+				},
+			});
+		}
+	}
+}
+
 // noinspection JSUnusedGlobalSymbols
 export default {
 	async fetch(request: Request, env: Env) {
-		switch (request.method) {
-			case 'HEAD':
-			case 'GET': {
-				const url = new URL(request.url);
-				const { pathname } = url;
-
-				if (pathname.startsWith('/archive/')) {
-					const [, , bucketType, ...filePathParts] = pathname.split('/');
-					const filePath = filePathParts.join('/');
-					const bucket = getBucketListingObj(bucketType, env);
-					return fetch_file(bucket, filePath, request); // Pass the request object here
-				}
-
-				if (pathname.startsWith('/latest/')) {
-					const [, , chain] = pathname.split('/');
-
-					const bucket_path = `${chain}/latest-v2/`;
-					const bucket = env.SNAPSHOT_ARCHIVE_V2;
-
-					const result = await getBucketObjects(bucket, bucket_path, true);
-					if (result.objects.length === 0) {
-						return new Response('No snapshots found', { status: 404 });
-					}
-					const snapshot = result.objects[0];
-					if (request.method === 'HEAD') {
-						return new Response(null, {
-							status: 200,
-							headers: {
-								'Content-Length': snapshot.size.toString(),
-								'Content-Type': 'application/octet-stream',
-								'Last-Modified': snapshot.uploaded.toUTCString(),
-								Url: `/archive/${snapshot.key}`,
-							},
-						});
-					}
-					return fetch_file(bucket, snapshot.key, request);
-				}
-
-				if (pathname.startsWith('/latest-v1/')) {
-					const [, , chain] = pathname.split('/');
-					const bucket = env.SNAPSHOT_ARCHIVE;
-					const result = await getBucketObjects(bucket, `${chain}/latest/`, true);
-					if (result.objects.length === 0) {
-						return new Response('No snapshots found', { status: 404 });
-					}
-					return fetch_file(bucket, result.objects[0].key, request);
-				}
-
-				if (pathname.startsWith('/latest-v2/')) {
-					const [, , chain] = pathname.split('/');
-					const bucket = env.SNAPSHOT_ARCHIVE_V2;
-					const result = await getBucketObjects(bucket, `${chain}/latest-v2/`, true);
-					if (result.objects.length === 0) {
-						return new Response('No snapshots found', { status: 404 });
-					}
-					return fetch_file(bucket, result.objects[0].key, request);
-				}
-
-				switch (pathname) {
-					case '/': {
-						return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
-					}
-					case '/list':
-					case '/list/': {
-						return new Response(renderSnapshotsHomePage(), { headers: { 'content-type': 'text/html' } });
-					}
-
-					case '/list/calibnet/latest':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
-					case '/list/calibnet/latest-v2':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'calibnet/latest-v2', 'Calibnet Latest Snapshots (F3)', url);
-					case '/list/calibnet/latest-v1':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'calibnet/latest', 'Calibnet Legacy Snapshots', url);
-					case '/list/calibnet/diff':
-						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/diff', 'Calibnet Diff Snapshots Archive', url);
-					case '/list/calibnet/lite':
-						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
-
-					case '/list/mainnet/latest':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
-					case '/list/mainnet/latest-v2':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
-					case '/list/mainnet/latest-v1':
-						return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest', 'Mainnet Legacy Snapshots', url);
-					case '/list/mainnet/diff':
-						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/diff', 'Mainnet Diff Snapshots Archive', url);
-					case '/list/mainnet/lite':
-						return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'mainnet/lite', 'Mainnet Lite Snapshots Archive', url);
-
-					default:
-						return env.ASSETS.fetch(request);
-				}
-			}
-			default: {
-				return new Response('Method not allowed', {
-					status: 405,
-					headers: {
-						Allow: 'GET, HEAD',
-					},
-				});
-			}
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				status: 204,
+				headers: {
+					'Access-Control-Allow-Origin': '*',
+					'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+					'Access-Control-Allow-Headers': '*',
+				},
+			});
 		}
+
+		const response = await handleRequest(request, env);
+		return withCors(response);
 	},
-};
+} satisfies ExportedHandler<Env>;
