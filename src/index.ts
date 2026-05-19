@@ -1,4 +1,4 @@
-import { type Env, getBucketListingObj, getBucketObjects } from './buckets';
+import { type Env, getBucketListingName, getBucketListingObj, getBucketObjects } from './buckets';
 import { do_listing_v2 } from './listings';
 import { fetch_file } from './files';
 import { renderSnapshotsHomePage } from './templates';
@@ -27,6 +27,18 @@ function withCors(response: Response): Response {
 	});
 }
 
+// /latest/* resolves to a different key whenever a new snapshot is published.
+// Serving bytes inline causes range-resume failures when the resolved key
+// rotates mid-download. Redirect to the immutable /archive/<bucket>/<key> URL
+// so subsequent range requests target a stable file.
+function redirectToArchive(env: Env, bucket: R2Bucket, key: string, requestUrl: URL): Response {
+	const target = new URL(`/archive/${getBucketListingName(bucket, env)}/${key}`, requestUrl);
+	return new Response(null, {
+		status: 302,
+		headers: { Location: target.toString(), 'Cache-Control': 'no-store' },
+	});
+}
+
 async function handleRequest(request: Request, env: Env): Promise<Response> {
 	switch (request.method) {
 		case 'HEAD':
@@ -51,19 +63,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 				if (result.objects.length === 0) {
 					return new Response('No snapshots found', { status: 404 });
 				}
-				const snapshot = result.objects[0];
-				if (request.method === 'HEAD') {
-					return new Response(null, {
-						status: 200,
-						headers: {
-							'Content-Length': snapshot.size.toString(),
-							'Content-Type': 'application/octet-stream',
-							'Last-Modified': snapshot.uploaded.toUTCString(),
-							Url: `/archive/${snapshot.key}`,
-						},
-					});
-				}
-				return fetch_file(bucket, snapshot.key, request);
+				return redirectToArchive(env, bucket, result.objects[0].key, url);
 			}
 
 			if (pathname.startsWith('/latest-v1/')) {
@@ -73,7 +73,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 				if (result.objects.length === 0) {
 					return new Response('No snapshots found', { status: 404 });
 				}
-				return fetch_file(bucket, result.objects[0].key, request);
+				return redirectToArchive(env, bucket, result.objects[0].key, url);
 			}
 
 			if (pathname.startsWith('/latest-v2/')) {
@@ -83,7 +83,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 				if (result.objects.length === 0) {
 					return new Response('No snapshots found', { status: 404 });
 				}
-				return fetch_file(bucket, result.objects[0].key, request);
+				return redirectToArchive(env, bucket, result.objects[0].key, url);
 			}
 
 			switch (pathname) {
