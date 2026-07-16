@@ -53,8 +53,17 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 				return fetch_file(bucket, filePath, request); // Pass the request object here
 			}
 
-			if (pathname.startsWith('/latest/')) {
-				const [, , chain] = pathname.split('/');
+			if (pathname === '/latest' || pathname.startsWith('/latest/')) {
+				// Only /latest/mainnet and /latest/calibnet resolve to the newest
+				// snapshot. Anything else under /latest/ (unknown chain, or extra
+				// path segments like a stale filename) is rejected — the filename
+				// would be silently ignored and resolve to a different file, which
+				// is misleading. A trailing slash is tolerated.
+				const segments = pathname.split('/').filter(Boolean); // e.g. ['latest', 'mainnet']
+				const chain = segments[1];
+				if (segments.length !== 2 || (chain !== 'mainnet' && chain !== 'calibnet')) {
+					return new Response('Not found', { status: 404 });
+				}
 
 				const bucket_path = `${chain}/latest-v2/`;
 				const bucket = env.SNAPSHOT_ARCHIVE_V2;
