@@ -14,6 +14,15 @@ interface R2ObjectWithTimestamp {
 	uploaded: Date;
 }
 
+// Extended-export sidecars (forest >= v0.35.0, PR #7376): the augmented receipts+events and
+// tipset-lookup CARs (and their .sha256sum) are additive companions to the base snapshot and
+// should not appear as standalone entries in the listing.
+const SIDECAR_SUFFIXES = ['_receipts_events', '_tipset_lookup'];
+
+export function isSidecarKey(key: string): boolean {
+	return SIDECAR_SUFFIXES.some((suffix) => key.includes(suffix));
+}
+
 /**
  * Map a known R2 bucket instance to its short listing name.
  *
@@ -63,6 +72,11 @@ export async function getBucketObjects(
 		for (const obj of result.objects) {
 			// Apply search filter if provided
 			if (searchQuery && !obj.key.toLowerCase().includes(searchQuery.toLowerCase())) {
+				continue;
+			}
+
+			// Hide extended-export sidecars (and their .sha256sum) from listings.
+			if (isSidecarKey(obj.key)) {
 				continue;
 			}
 
