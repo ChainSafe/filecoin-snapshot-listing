@@ -14,12 +14,33 @@ export function renderListingPageTemplate(title: string, bodyContent: string, se
 		.replace('{{searchValue}}', searchQuery || '');
 }
 
-export function renderSnapshotCardTemplate(key: string, base: string, fileSize: string, uploaded: Date): string {
+const ENRICHED_DOCS_URL = 'https://docs.forest.chainsafe.io/knowledge_base/enriched_snapshots';
+
+// Badge + hover/focus tooltip shown on snapshots that ship extended-export sidecars.
+const ENRICHED_BADGE = `
+      <span class="enriched-wrap" tabindex="0" aria-label="Enriched snapshot — learn more">
+        <span class="enriched-badge">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l1.9 4.7L18.5 8l-3.6 3 1.1 4.8L12 13.9 8 15.8 9.1 11 5.5 8l4.6-1.3L12 2z"/></svg>
+          Enriched
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 11v5M12 8h.01"/></svg>
+        </span>
+        <span class="enriched-arrow"></span>
+        <span class="enriched-tip"><a class="enriched-link" href="${ENRICHED_DOCS_URL}" target="_blank" rel="noopener">Learn more →</a></span>
+      </span>`;
+
+export function renderSnapshotCardTemplate(
+	key: string,
+	base: string,
+	fileSize: string,
+	uploaded: Date,
+	hasExtended: boolean = false,
+): string {
 	return cardHtml
 		.replaceAll('{{key}}', key)
 		.replaceAll('{{base}}', base)
 		.replaceAll('{{fileSize}}', fileSize)
-		.replaceAll('{{uploaded}}', uploaded.toLocaleString('en-US', { timeZone: 'UTC', hour12: false }));
+		.replaceAll('{{uploaded}}', uploaded.toLocaleString('en-US', { timeZone: 'UTC', hour12: false }))
+		.replace('{{enrichedBadge}}', hasExtended ? ENRICHED_BADGE : '');
 }
 
 export function renderSnapshotsHomePage(): string {

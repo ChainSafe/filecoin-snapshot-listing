@@ -8,6 +8,50 @@
   <script src="/static/filecoin-listing.js"></script>
   <link href="/static/style.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Enriched-snapshot badge + hover/focus tooltip (PR #7376 extended export) */
+    .enriched-wrap { position: relative; display: inline-flex; flex-direction: column; align-items: flex-end; }
+    .enriched-wrap:focus-visible { outline: 2px solid #34d399; outline-offset: 3px; border-radius: 999px; }
+    .enriched-badge {
+      display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; cursor: help;
+      font-size: 11px; font-weight: 600; letter-spacing: .04em; color: #34d399;
+      background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.35);
+      border-radius: 999px; padding: 4px 10px;
+    }
+    .enriched-badge svg { width: 13px; height: 13px; }
+    .enriched-tip {
+      position: absolute; top: calc(100% + 9px); right: 0; z-index: 20; display: flex;
+      width: max-content; min-width: 120px; background: #0f1830;
+      border: 1px solid rgba(75,85,99,.5); border-radius: 12px; padding: 10px 14px;
+      font-size: 12.5px; box-shadow: 0 16px 40px -16px rgba(0,0,0,.8);
+      opacity: 0; visibility: hidden; transform: translateY(-4px);
+      /* linger ~0.35s before hiding so the cursor can reach the tooltip */
+      transition: opacity .2s ease .35s, transform .2s ease .35s, visibility 0s linear .55s;
+    }
+    /* invisible bridge across the badge↔tooltip gap so hover isn't lost mid-travel */
+    .enriched-tip::before { content: ''; position: absolute; left: 0; right: 0; top: -13px; height: 13px; }
+    .enriched-arrow {
+      position: absolute; top: calc(100% + 4px); right: 12px; width: 10px; height: 10px;
+      background: #0f1830; border-left: 1px solid rgba(75,85,99,.5); border-top: 1px solid rgba(75,85,99,.5);
+      transform: rotate(45deg); z-index: 21; opacity: 0; visibility: hidden;
+      transition: opacity .2s ease .35s, visibility 0s linear .55s;
+    }
+    .enriched-wrap:hover .enriched-tip, .enriched-wrap:focus-within .enriched-tip {
+      opacity: 1; visibility: visible; transform: translateY(0);
+      transition: opacity .15s ease 0s, transform .15s ease 0s, visibility 0s linear 0s;
+    }
+    .enriched-wrap:hover .enriched-arrow, .enriched-wrap:focus-within .enriched-arrow {
+      opacity: 1; visibility: visible; transition: opacity .15s ease 0s, visibility 0s linear 0s;
+    }
+    .enriched-link {
+      color: #34d399; text-decoration: none; font-weight: 500; white-space: nowrap;
+      border-bottom: 1px solid transparent; transition: border-color .2s;
+    }
+    .enriched-link:hover { border-color: #34d399; }
+    @media (prefers-reduced-motion: reduce) {
+      .enriched-tip, .enriched-arrow { transform: none; transition: opacity .15s, visibility 0s linear .35s; }
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-gray-100 font-sans min-h-screen">
 
