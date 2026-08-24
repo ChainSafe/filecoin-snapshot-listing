@@ -11,6 +11,7 @@
         https://forest-archive.chainsafe.dev{{base}}
       </h2>
     </div>
+    {{enrichedBadge}}
   </div>
 
   <!-- File Info -->

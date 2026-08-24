@@ -12,6 +12,8 @@ interface R2ObjectWithTimestamp {
 	size: number;
 	sha256sum: string;
 	uploaded: Date;
+	// True when this base snapshot has extended-export sidecars alongside it.
+	hasExtended: boolean;
 }
 
 // Extended-export sidecars (forest >= v0.35.0, PR #7376): the augmented receipts+events and
@@ -21,6 +23,11 @@ const SIDECAR_SUFFIXES = ['_receipts_events', '_tipset_lookup'];
 
 export function isSidecarKey(key: string): boolean {
 	return SIDECAR_SUFFIXES.some((suffix) => key.includes(suffix));
+}
+
+// Map a sidecar CAR key back to its base snapshot key by stripping the sidecar suffix.
+function baseKeyOf(sidecarKey: string): string {
+	return SIDECAR_SUFFIXES.reduce((key, suffix) => key.replace(suffix, ''), sidecarKey);
 }
 
 /**
@@ -59,6 +66,8 @@ export async function getBucketObjects(
 	searchQuery?: string,
 ): Promise<{ objects: R2ObjectWithTimestamp[]; totalCount: number; hasMore: boolean }> {
 	const allObjects: R2ObjectWithTimestamp[] = [];
+	// Base keys that have an extended-export sidecar alongside them.
+	const extendedBaseKeys = new Set<string>();
 	let totalCount = 0;
 
 	let cursor: string | undefined = undefined;
@@ -70,13 +79,18 @@ export async function getBucketObjects(
 		const result = await bucket.list({ limit: 500, prefix: prefix, cursor });
 
 		for (const obj of result.objects) {
-			// Apply search filter if provided
-			if (searchQuery && !obj.key.toLowerCase().includes(searchQuery.toLowerCase())) {
+			// Hide extended-export sidecars (and their .sha256sum) from listings, but remember
+			// which base snapshot they belong to so we can flag it. Done before the search filter
+			// so the flag is independent of the current query.
+			if (isSidecarKey(obj.key)) {
+				if (obj.key.endsWith('.car.zst')) {
+					extendedBaseKeys.add(baseKeyOf(obj.key));
+				}
 				continue;
 			}
 
-			// Hide extended-export sidecars (and their .sha256sum) from listings.
-			if (isSidecarKey(obj.key)) {
+			// Apply search filter if provided
+			if (searchQuery && !obj.key.toLowerCase().includes(searchQuery.toLowerCase())) {
 				continue;
 			}
 
@@ -91,11 +105,17 @@ export async function getBucketObjects(
 				size: obj.size,
 				sha256sum: sha256,
 				uploaded: obj.uploaded ?? new Date(),
+				hasExtended: false,
 			});
 		}
 
 		truncated = result.truncated;
 		cursor = result.truncated ? result.cursor : undefined;
+	}
+
+	// Flag base snapshots that ship extended-export sidecars.
+	for (const obj of allObjects) {
+		obj.hasExtended = extendedBaseKeys.has(obj.key);
 	}
 
 	// Sort all objects by height in descending order (latest first)

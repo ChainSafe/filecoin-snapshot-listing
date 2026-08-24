@@ -25,6 +25,7 @@ export async function do_listing_v2(
 			sha256url: `${baseUrl ?? ''}/archive/${bucketName}/${obj.key}.sha256sum`,
 			size: obj.size,
 			uploaded: obj.uploaded.toISOString(),
+			extended: obj.hasExtended,
 		}));
 
 		return new Response(JSON.stringify({ total: allCarFiles.length, offset, limit, items }, null, 2), {
@@ -46,7 +47,7 @@ export async function do_listing_v2(
 		const base = `/archive/${getBucketListingName(bucket, env)}/${obj.key}`;
 		const fileSize = formatFileSize(obj.size);
 
-		bodyContent += renderSnapshotCardTemplate(obj.key, base, fileSize, obj.uploaded);
+		bodyContent += renderSnapshotCardTemplate(obj.key, base, fileSize, obj.uploaded, obj.hasExtended);
 	}
 
 	bodyContent += `</div>`;
