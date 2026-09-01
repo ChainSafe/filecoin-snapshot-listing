@@ -116,7 +116,7 @@ async function handleRequest(request: Request, env: Env): Promise<Response> {
 					return handleListingWithPagination(env, env.FOREST_ARCHIVE, 'calibnet/lite', 'Calibnet Lite Snapshots Archive', url);
 
 				case '/list/mainnet/latest':
-					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
+					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
 				case '/list/mainnet/latest-v2':
 					return handleListingWithPagination(env, env.SNAPSHOT_ARCHIVE_V2, 'mainnet/latest-v2', 'Mainnet Latest Snapshots (F3)', url);
 				case '/list/mainnet/latest-v1':
