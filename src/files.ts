@@ -13,6 +13,15 @@ export async function fetch_file(bucket: R2Bucket, path: string, request: Reques
 
 	let status = 200;
 
+	// R2 hands back the whole object body regardless of the request method, and streaming a
+	// multi-gigabyte snapshot for a header-only request never completes -- HEAD on a large
+	// archive object used to hang until the client gave up. Answer it from metadata instead.
+	if (request.method === 'HEAD') {
+		headers.set('Content-Length', object.size.toString());
+		headers.set('Accept-Ranges', 'bytes');
+		return new Response(null, { headers, status });
+	}
+
 	const rangeHeader = request.headers.get('range');
 	if (rangeHeader) {
 		const range = parseRange(object.size, rangeHeader);
